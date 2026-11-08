@@ -3,123 +3,102 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Happy Diwali | Jiya</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diwali Surprise for Jiya</title>
 <style>
 *{box-sizing:border-box}
-body{
-margin:0;min-height:100vh;
-display:flex;align-items:center;justify-content:center;
-background:radial-gradient(circle,#47134f,#10051e,#03020a);
-color:white;font-family:Georgia,serif;text-align:center;
-overflow:hidden;padding:20px
-}
-.card{
-width:100%;max-width:650px;padding:30px 20px;
-border:1px solid #ffd97855;border-radius:28px;
-background:#ffffff08;box-shadow:0 0 60px #ff9b2220
-}
-small{color:#ffd978;letter-spacing:4px}
-h1{font-size:clamp(42px,9vw,75px);color:#ffe7a0;margin:18px 0}
-p{color:#eadcff;font-family:Arial;line-height:1.6}
-.diya{font-size:130px;animation:float 3s infinite;filter:drop-shadow(0 0 25px orange);cursor:pointer}
+body{margin:0;background:radial-gradient(circle,#54205b,#170827,#08020f);color:white;font-family:Georgia;text-align:center}
+.screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.panel{max-width:600px;padding:30px 22px;border:1px solid #ffdb9b55;border-radius:28px;background:#ffffff0a;box-shadow:0 0 70px #ff9b2520}
+h1{font-size:clamp(40px,9vw,68px);color:#ffe6a0;text-shadow:0 0 25px #ffad3b}
+p{font:16px/1.7 Arial;color:#f4dff8}
+.diya{font-size:110px;filter:drop-shadow(0 0 20px orange);animation:float 3s infinite;cursor:pointer}
 @keyframes float{50%{transform:translateY(-12px)}}
-input{padding:13px;border-radius:12px;background:#180c2c;color:white;border:1px solid #ffd97855;margin:7px;width:85%;max-width:280px;text-align:center}
-button{padding:13px 20px;margin:7px;border:0;border-radius:30px;background:linear-gradient(135deg,#ffe7a0,#ffad36);font-weight:bold;cursor:pointer}
-.secondary{background:#ffffff15;color:white;border:1px solid #ffffff30}
-#wish{font-size:22px;color:#ffe8b3;margin:20px 0}
+button{border:0;border-radius:30px;padding:14px 22px;margin:8px;background:linear-gradient(135deg,#ffe8a5,#ff9c28);font-weight:bold;cursor:pointer}
+.alt{background:#ffffff15;color:white;border:1px solid #ffffff35}
+.hidden{display:none!important}
+.letter{background:#fff1d6;color:#54213b;border-radius:18px;padding:24px;font:17px/1.8 Georgia}
 canvas{position:fixed;inset:0;pointer-events:none}
-.card{position:relative;z-index:2}
+.panel{position:relative;z-index:2}
 </style>
 </head>
-
 <body>
 <canvas id="sky"></canvas>
 
-<div class="card">
-<small>A LITTLE LIGHT, JUST FOR YOU</small>
-
-<h1>शुभ दीपावली</h1>
-<p>May your world glow with love, peace & endless happiness ✨</p>
-
-<div class="diya" onclick="firework()">🪔</div>
-<p>Tap the diya to make a wish</p>
-
-<input id="name" value="Jiya" placeholder="Enter name">
-<input id="sender" placeholder="Your name (optional)">
-
-<div id="wish">Jiya, may every diya bring a new reason to smile. Happy Diwali! 💛</div>
-
-<button onclick="makeWish()">✨ Create my wish</button>
-<button class="secondary" onclick="music()">♫ Play music</button>
-<button class="secondary" onclick="share()">🔗 Share wish</button>
-
-<p id="status"></p>
+<section class="screen" id="one">
+<div class="panel">
+<p>✨ A LITTLE FESTIVE MAGIC ✨</p>
+<h1>Hey, Jiya!</h1>
+<p>Someone has a Diwali surprise waiting just for you…</p>
+<div class="diya" onclick="light()">🪔</div>
+<p>Tap the diya to begin</p>
+<button onclick="light()">Light the diya ✨</button>
 </div>
+</section>
+
+<section class="screen hidden" id="two">
+<div class="panel">
+<p>A LITTLE LIGHT, JUST FOR YOU</p>
+<h1>शुभ दीपावली</h1>
+<div class="diya" onclick="burst()">🪔</div>
+<p>May your days sparkle with love, laughter and beautiful beginnings.</p>
+<button onclick="card()">Open your surprise 💌</button>
+<button class="alt" onclick="burst()">Make a wish ✨</button>
+</div>
+</section>
+
+<section class="screen hidden" id="three">
+<div class="panel">
+<h1>Happy Diwali, Jiya!</h1>
+<div class="letter">
+Dear Jiya,<br>
+May every diya light up a dream, every sparkle bring a smile, and every new day feel full of beautiful beginnings.<br><br>
+You deserve all the happiness and magic this festive season can bring. 💛<br><br>
+<strong>Keep shining, always. ✨</strong>
+</div>
+<p>With lots of warmth & festive love</p>
+<button onclick="share()">Share this wish 💫</button>
+<button class="alt" onclick="location.reload()">Replay surprise ↻</button>
+</div>
+</section>
 
 <script>
-const name=document.getElementById("name");
-const sender=document.getElementById("sender");
-const wish=document.getElementById("wish");
-
-function makeWish(){
-wish.innerText=(name.value||"Someone special")+
-", may every diya bring a new reason to smile. Happy Diwali! 💛"+
-(sender.value?" — With love, "+sender.value:"");
-firework();
-}
-
-name.oninput=makeWish;
-sender.oninput=makeWish;
-
-async function share(){
-const link=location.href.split("?")[0]+"?to="+encodeURIComponent(name.value)+"&from="+encodeURIComponent(sender.value);
-try{
-await navigator.clipboard.writeText(link);
-document.getElementById("status").innerText="Personalized link copied! Share on WhatsApp 💛";
-}catch(e){
-document.getElementById("status").innerText=link;
-}
-}
-
-let playing=false,ctx;
-function music(){
-if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();
-if(playing){ctx.suspend();playing=false;return}
-ctx.resume();playing=true;
-[261.6,329.6,392,523.2].forEach((f,i)=>{
-let o=ctx.createOscillator(),g=ctx.createGain();
-o.frequency.value=f;o.type="sine";g.gain.value=.04;
-o.connect(g);g.connect(ctx.destination);o.start();
-});
-}
-
-const canvas=document.getElementById("sky"),c=canvas.getContext("2d");
+const c=document.getElementById('sky'),ctx=c.getContext('2d');
 let parts=[];
-function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+function resize(){c.width=innerWidth;c.height=innerHeight}
 resize();onresize=resize;
 
-function firework(){
-let x=Math.random()*canvas.width,y=Math.random()*canvas.height*.5;
-for(let i=0;i<90;i++){
-let a=Math.PI*2*i/90,s=Math.random()*4+1;
-parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:80,h:Math.random()*360});
-}
-}
-setInterval(firework,1800);
-
+function burst(){
+for(let k=0;k<4;k++){
+let x=Math.random()*c.width,y=Math.random()*c.height*.5;
+for(let i=0;i<70;i++){
+let a=i*Math.PI*2/70,s=1+Math.random()*4;
+parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:70,h:Math.random()*360});
+}}}
 function draw(){
-c.clearRect(0,0,canvas.width,canvas.height);
+ctx.clearRect(0,0,c.width,c.height);
 parts=parts.filter(p=>p.life>0);
-parts.forEach(p=>{
+for(let p of parts){
 p.x+=p.vx;p.y+=p.vy;p.vy+=.04;p.life--;
-c.fillStyle="hsl("+p.h+",100%,65%)";
-c.globalAlpha=p.life/80;c.beginPath();c.arc(p.x,p.y,2,0,7);c.fill();
-});
-c.globalAlpha=1;requestAnimationFrame(draw);
+ctx.globalAlpha=p.life/70;
+ctx.fillStyle=`hsl(${p.h},100%,65%)`;
+ctx.beginPath();ctx.arc(p.x,p.y,2,0,7);ctx.fill();
 }
-draw();
+ctx.globalAlpha=1;requestAnimationFrame(draw);
+}draw();
+
+function light(){
+one.classList.add('hidden');two.classList.remove('hidden');
+burst();setTimeout(burst,500);
+}
+function card(){
+two.classList.add('hidden');three.classList.remove('hidden');
+burst();setTimeout(burst,500);setTimeout(burst,1000);
+}
+async function share(){
+try{await navigator.clipboard.writeText(location.href);alert('Link copied! Share it 💛')}
+catch(e){prompt('Copy link:',location.href)}
+}
 </script>
 </body>
 </html>
