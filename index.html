@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Happy Diwali | Jiya</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;min-height:100vh;
+display:flex;align-items:center;justify-content:center;
+background:radial-gradient(circle,#47134f,#10051e,#03020a);
+color:white;font-family:Georgia,serif;text-align:center;
+overflow:hidden;padding:20px
+}
+.card{
+width:100%;max-width:650px;padding:30px 20px;
+border:1px solid #ffd97855;border-radius:28px;
+background:#ffffff08;box-shadow:0 0 60px #ff9b2220
+}
+small{color:#ffd978;letter-spacing:4px}
+h1{font-size:clamp(42px,9vw,75px);color:#ffe7a0;margin:18px 0}
+p{color:#eadcff;font-family:Arial;line-height:1.6}
+.diya{font-size:130px;animation:float 3s infinite;filter:drop-shadow(0 0 25px orange);cursor:pointer}
+@keyframes float{50%{transform:translateY(-12px)}}
+input{padding:13px;border-radius:12px;background:#180c2c;color:white;border:1px solid #ffd97855;margin:7px;width:85%;max-width:280px;text-align:center}
+button{padding:13px 20px;margin:7px;border:0;border-radius:30px;background:linear-gradient(135deg,#ffe7a0,#ffad36);font-weight:bold;cursor:pointer}
+.secondary{background:#ffffff15;color:white;border:1px solid #ffffff30}
+#wish{font-size:22px;color:#ffe8b3;margin:20px 0}
+canvas{position:fixed;inset:0;pointer-events:none}
+.card{position:relative;z-index:2}
+</style>
+</head>
+
+<body>
+<canvas id="sky"></canvas>
+
+<div class="card">
+<small>A LITTLE LIGHT, JUST FOR YOU</small>
+
+<h1>शुभ दीपावली</h1>
+<p>May your world glow with love, peace & endless happiness ✨</p>
+
+<div class="diya" onclick="firework()">🪔</div>
+<p>Tap the diya to make a wish</p>
+
+<input id="name" value="Jiya" placeholder="Enter name">
+<input id="sender" placeholder="Your name (optional)">
+
+<div id="wish">Jiya, may every diya bring a new reason to smile. Happy Diwali! 💛</div>
+
+<button onclick="makeWish()">✨ Create my wish</button>
+<button class="secondary" onclick="music()">♫ Play music</button>
+<button class="secondary" onclick="share()">🔗 Share wish</button>
+
+<p id="status"></p>
+</div>
+
+<script>
+const name=document.getElementById("name");
+const sender=document.getElementById("sender");
+const wish=document.getElementById("wish");
+
+function makeWish(){
+wish.innerText=(name.value||"Someone special")+
+", may every diya bring a new reason to smile. Happy Diwali! 💛"+
+(sender.value?" — With love, "+sender.value:"");
+firework();
+}
+
+name.oninput=makeWish;
+sender.oninput=makeWish;
+
+async function share(){
+const link=location.href.split("?")[0]+"?to="+encodeURIComponent(name.value)+"&from="+encodeURIComponent(sender.value);
+try{
+await navigator.clipboard.writeText(link);
+document.getElementById("status").innerText="Personalized link copied! Share on WhatsApp 💛";
+}catch(e){
+document.getElementById("status").innerText=link;
+}
+}
+
+let playing=false,ctx;
+function music(){
+if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();
+if(playing){ctx.suspend();playing=false;return}
+ctx.resume();playing=true;
+[261.6,329.6,392,523.2].forEach((f,i)=>{
+let o=ctx.createOscillator(),g=ctx.createGain();
+o.frequency.value=f;o.type="sine";g.gain.value=.04;
+o.connect(g);g.connect(ctx.destination);o.start();
+});
+}
+
+const canvas=document.getElementById("sky"),c=canvas.getContext("2d");
+let parts=[];
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();onresize=resize;
+
+function firework(){
+let x=Math.random()*canvas.width,y=Math.random()*canvas.height*.5;
+for(let i=0;i<90;i++){
+let a=Math.PI*2*i/90,s=Math.random()*4+1;
+parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:80,h:Math.random()*360});
+}
+}
+setInterval(firework,1800);
+
+function draw(){
+c.clearRect(0,0,canvas.width,canvas.height);
+parts=parts.filter(p=>p.life>0);
+parts.forEach(p=>{
+p.x+=p.vx;p.y+=p.vy;p.vy+=.04;p.life--;
+c.fillStyle="hsl("+p.h+",100%,65%)";
+c.globalAlpha=p.life/80;c.beginPath();c.arc(p.x,p.y,2,0,7);c.fill();
+});
+c.globalAlpha=1;requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>
